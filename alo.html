@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            *{
+                font-family:sans-serif;
+            }
+           p {
+                font-size: 0.85 em;
+           } 
+           .state {
+
+            fill: #8B0000;
+            stroke:#000;
+            stroke-width: 0.5;
+
+           }
+           .state-label {
+            fill: black;
+            font-size: 12px;
+            text-anchor: middle;
+            pointer-events: none;
+    }
+           .slider-container {
+                width: 300px;
+                margin: 20px;
+        }
+
+#slider {
+  width: 100%;
+}
+
+#slider-value {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-button {
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  z-index: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #ddd;
+}
+.nav-container {
+  display: flex;
+}
+#popup {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+  display: none;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.legend-label {
+  font-size: 12px;
+}
+        </style>
+    </head>
+    <nav>
+        <div class="nav-container">
+        <div class="slider-container">
+          <input type="range" id="slider" min="1997" max="2017" value="1997" step="1">
+          <span id="slider-value">1997</span>
+        </div>
+        <div class="dropdown">
+          <button class="dropdown-button">Cause Name</button>
+          <ul class="dropdown-menu">
+            <li><a href="#">All causes</a></li>
+            <li><a href="#">Unintentional injuries</a></li>
+            <li><a href="#">Alzheimer's disease</a></li>
+            <li><a href="#">Stroke</a></li>
+            <li><a href="#">Chronic lower respiratory diseases</a></li>
+            <li><a href="#">Diabetes</a></li>
+            <li><a href="#">Heart disease</a></li>
+            <li><a href="#">Influenza and pneumonia</a></li>
+            <li><a href="#">Suicide</a></li>
+            <li><a href="#">Cancer</a></li>
+            <li><a href="#">Kidney disease</a></li>
+          </ul>
+        </div>
+      </div>
+      </nav>
+    <body>
+      <div id="popup"></div>
+        <div id="map"></div>
+        <div id="legend"></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
+        <script src="script.js"></script>
+        
+    </body>
+</html>
