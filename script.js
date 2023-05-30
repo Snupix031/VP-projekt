@@ -7,6 +7,7 @@
   ///////////////////LEGENDA/////////////////////
   var colors = ["#FFB6C1", "#F08080", "#CD5C5C", "#B22222", "#8B0000"];
   var legend = d3.select("#legend");
+  var deathRate = ["<20","<30","<40","<50","50+",]
 
 var legendItems = legend.selectAll(".legend-item")
   .data(colors)
@@ -20,7 +21,7 @@ legendItems.append("div")
 
 legendItems.append("div")
   .attr("class", "legend-label")
-  .text(function(d, i) { return "Category " + (i + 1); });
+  .text(function(d, i) { return "Age-adjusted Death Rate: " + deathRate[i]; });
 ///////////MAPA/////////////////////////////////////////////
   var svg=d3.select("#map")
     .append("svg")
@@ -90,8 +91,38 @@ legendItems.append("div")
       .on("mouseout", function() {
         // Sakrij popout kada se miš pomakne iznad države
         d3.select("#popup").style("display", "none");
-      });
+      })
+      .attr("fill", function(d) {
+        var stateName = d.properties.name;
+      
+        var stateData = mydata.find(function(data) {
+          
+          
+          return data.State === stateName;
+        })
         
+      if (stateData) {
+          var deathRate = stateData["Age-adjusted Death Rate"];
+           return getColor(deathRate);
+        } 
+        
+      });
+      
+        
+        function getColor(deathRate) {
+          
+          if (deathRate < 20) {
+            return colors[0];
+          } else if (deathRate < 30) {
+            return colors[1];
+          } else if (deathRate < 40) {
+            return colors[2];
+          } else if (deathRate < 50) {
+            return colors[3];
+          } else {
+            return colors[4];
+          }
+        }
        ///////////////////SLIDER-BAR/////////////////////
       var slider = document.getElementById("slider");
       var sliderValue = document.getElementById("slider-value");
