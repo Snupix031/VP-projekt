@@ -6,9 +6,13 @@
   width = 800 - margin.left- margin.right;
   ///////////////////LEGENDA/////////////////////
   var colors = ["#FFB6C1", "#F08080", "#CD5C5C", "#B22222", "#8B0000"];
+  var sliderFinal = 1999;
+  var selectedOption ="Unintentional injuries";
   var legend = d3.select("#legend");
-  var deathRate = ["<20","<30","<40","<50","50+",]
-
+  var deathRate = ["<20","<30","<40","<50","50+",];
+  var CancerDeathRate= ["<120","<130","<140","<150","150+"];
+  var i=0;
+  
 var legendItems = legend.selectAll(".legend-item")
   .data(colors)
   .enter()
@@ -20,8 +24,22 @@ legendItems.append("div")
   .style("background-color", function(d) { return d; });
 
 legendItems.append("div")
+  
   .attr("class", "legend-label")
-  .text(function(d, i) { return "Age-adjusted Death Rate: " + deathRate[i]; });
+  .text("Age-adjusted Death Rate: ")
+  
+  .text(function(d, i) { 
+    
+    
+    //console.log("dadaa"+ selectedOption);
+    if(selectedOption==="Cancer")
+    {
+      return "Age-adjusted Death Rate: "+ CancerDeathRate[i];
+    }
+    else{
+      return "Age-adjusted Death Rate: " + deathRate[i];
+    }
+     });
 ///////////MAPA/////////////////////////////////////////////
   var svg=d3.select("#map")
     .append("svg")
@@ -32,7 +50,7 @@ legendItems.append("div")
 
     d3.queue()
       .defer(d3.json,"usa-topojson.json")
-      .defer(d3.json,"bolest.json")
+      .defer(d3.json,"csvjson.json")
       .await(ready)
 
  var projection = d3.geoAlbersUsa()
@@ -45,6 +63,8 @@ legendItems.append("div")
 
     function ready(error,data,mydata)
     {
+     
+
       var states = topojson.feature(data, data.objects.states).features
       states.forEach(function(state) {
         var stateName = state.properties.name;
@@ -54,10 +74,9 @@ legendItems.append("div")
         // Pronalaženje podataka za određenu državu u "bolestData"
        var stateData = mydata.find(function(d) {
          
-          return d.State === stateName;
+          return d.State === stateName && d.Year === sliderFinal && d["Cause Name"] === selectedOption;
         });
-
-        
+       
     
         // Ako se podaci pronađu, dodajte ih kao svojstva države
         if (stateData) {
@@ -85,7 +104,7 @@ legendItems.append("div")
           d3.select("#popup")
           .style("left", d3.event.pageX + "px")
           .style("top", d3.event.pageY + "px")
-          .html("Deaths: " + deaths + "<br>Age-Adjusted Death Rate: " + ageAdjustedDeathRate +"<br>Cause name: " + causeName)
+          .html("Deaths: " + deaths + "<br>Age-Adjusted Death Rate: " + ageAdjustedDeathRate )
           .style("display", "block");
       })
       .on("mouseout", function() {
@@ -123,23 +142,31 @@ legendItems.append("div")
             return colors[4];
           }
         }
+        function getColorCancer(deathRate){
+          if (deathRate < 120) {
+            return colors[0];
+          } else if (deathRate < 130) {
+            return colors[1];
+          } else if (deathRate < 140) {
+            return colors[2];
+          } else if (deathRate < 150) {
+            return colors[3];
+          } else {
+            return colors[4];
+          }
+
+        }
        ///////////////////SLIDER-BAR/////////////////////
-      var slider = document.getElementById("slider");
-      var sliderValue = document.getElementById("slider-value");
-      var finalValue= 2017;
-      slider.oninput = function() {
-        sliderValue.textContent = this.value;
-        
-     };
-     slider.onchange = function() {
-  
-      finalValue = this.value;
       
-     
-      console.log("Final value: " + finalValue);
-      
-      
-    };
+       var slider = d3.select(".slider");
+       var sliderValue = d3.select(".slider-value");
+       sliderValue.text(slider.property("value"));
+       
+       slider.on("input", function () {
+        sliderValue.text(slider.property("value"));
+        sliderFinal = +slider.property("value");
+        redrawMap();
+       });
      
 
    
@@ -154,14 +181,21 @@ legendItems.append("div")
 
       dropdownButton.addEventListener('click', function() {
         dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        //console.log(sliderFinal);
       });   
       
-      var selectedOption;
+      
       dropdownOptions.forEach(function(option) {
         option.addEventListener('click', function() {
         selectedOption = option.textContent;
-        console.log('Selected option:', selectedOption);
-        return selectedOption;
+        if(selectedOption== "Chronic lower respiratory diseases")
+        {
+          selectedOption="CLRD"
+        }
+        console.log(selectedOption);
+        updateSelectedOptionDisplay();
+        redrawMap();
+        updateLegend();
         });
       }); 
       
@@ -172,10 +206,50 @@ legendItems.append("div")
         }
       
       }); 
-     
+      function redrawMap() {
+        svg.selectAll(".state")
+          .attr("fill", function (d) {
+            var stateName = d.properties.name;
       
-
-
+            var stateData = mydata.find(function (data) {
+              return data.State === stateName && data.Year === sliderFinal && data["Cause Name"] === selectedOption;
+            });
+      
+            if (stateData) {
+              var deathRate = stateData["Age-adjusted Death Rate"];
+              var CaseName= stateData["Cause Name"];
+              //console.log("lalal:"+CaseName);
+              if(selectedOption=="Cancer")
+              {
+                return getColorCancer(deathRate);
+              }
+              else
+              {
+                return getColor(deathRate);
+              }
+              
+            }
+          });
+      }
+      function updateSelectedOptionDisplay() {
+        var selectedOptionDisplay = document.getElementById("selectedOptionDisplay");
+        selectedOptionDisplay.textContent = selectedOption;
+      }
+      function updateLegend() {
+        legendItems.selectAll(".legend-label")
+        
+          .text(function(d, i) {
+            
+            if (selectedOption === "Cancer") {
+              return "Stopa smrtnosti od raka: " + CancerDeathRate[i];
+            } else {
+              return "Prilagođena stopa smrtnosti: " + deathRate[i];
+            }
+            
+          });
+      }
+      updateLegend();
+      updateSelectedOptionDisplay();
 
 
 

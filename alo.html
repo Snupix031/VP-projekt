@@ -23,18 +23,30 @@
             pointer-events: none;
     }
            .slider-container {
-                width: 300px;
-                margin: 20px;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
         }
+        .slider {
+  flex: 1;
+}
 
 #slider {
   width: 100%;
 }
 
 #slider-value {
-  display: block;
+  margin-left: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+#selectedOptionDisplay {
+  flex: 1;
   text-align: center;
-  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
 }
 .dropdown {
   position: relative;
@@ -42,12 +54,14 @@
 }
 
 .dropdown-button {
+  margin-left: 20px;
   background-color: #f1f1f1;
   color: #333;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
 }
+
 
 .dropdown-menu {
   display: none;
@@ -101,8 +115,8 @@
     <nav>
         <div class="nav-container">
         <div class="slider-container">
-          <input type="range" id="slider" min="1997" max="2017" value="1997" step="1">
-          <span id="slider-value">1997</span>
+          <input type="range" class="slider" min="1999" max="2017" value="1997" step="1">
+          <span class="slider-value">1997</span>
         </div>
         <div class="dropdown">
           <button class="dropdown-button">Cause Name</button>
@@ -120,6 +134,7 @@
             <li><a href="#">Kidney disease</a></li>
           </ul>
         </div>
+        <span id="selectedOptionDisplay"></span>
       </div>
       </nav>
     <body>
