@@ -26,7 +26,7 @@ legendItems.append("div")
 legendItems.append("div")
   
   .attr("class", "legend-label")
-  .text("Age-adjusted Death Rate: ")
+  
   
   .text(function(d, i) { 
     
@@ -122,20 +122,7 @@ legendItems.append("div")
             return colors[4];
           }
         }
-        function getColorCancer(deathRate){
-          if (deathRate < 120) {
-            return colors[0];
-          } else if (deathRate < 130) {
-            return colors[1];
-          } else if (deathRate < 140) {
-            return colors[2];
-          } else if (deathRate < 150) {
-            return colors[3];
-          } else {
-            return colors[4];
-          }
-
-        }
+        
        ///////////////////SLIDER-BAR/////////////////////
       
        var slider = d3.select(".slider");
@@ -146,7 +133,7 @@ legendItems.append("div")
         sliderValue.text(slider.property("value"));
         sliderFinal = +slider.property("value");
         redrawMap();
-        pop();
+        
        });
      
 
@@ -177,7 +164,7 @@ legendItems.append("div")
         updateSelectedOptionDisplay();
         redrawMap();
         
-        pop();
+        
         });
       }); 
       
@@ -212,12 +199,10 @@ legendItems.append("div")
       
             if (stateData) {
               var deathRate = stateData["Age-adjusted Death Rate"];
-              var CaseName = stateData["Cause Name"];
-              if (selectedOption === "Cancer") {
-                return getColorCancer(deathRate);
-              } else {
+              
+              
                 return getColor(deathRate);
-              }
+              
             }
           })
           .on("mouseover", function(d) {
@@ -241,40 +226,7 @@ legendItems.append("div")
           
       }
 
-      function pop()
-      {
-        svg.selectAll(".state")
-        .data(states)
-        .enter().append("path")
-        .attr("class", "state")
-        .attr("d", path)
-        .on("mouseover", function(d) {
-          var stateName = d.properties.name;
       
-            var stateData = mydata.find(function (data) {
-              return data.State === stateName && data.Year === sliderFinal && data["Cause Name"] === selectedOption;
-            });
-          // Prikaz popouta s vrijednostima iz podataka države
-         
-          if (stateData) {
-            var deaths = d.properties.deaths || "N/A";
-            var ageAdjustedDeathRate = d.properties.ageAdjustedDeathRate || "N/A";
-            var causeName =d.properties.causeName || "N/A";
-          }
-          
-          // Prikaz ostalih željenih podataka
-          d3.select(".popup")
-          .style("left", d3.event.pageX + "px")
-          .style("top", d3.event.pageY + "px")
-          .html("Deaths: " + deaths + "<br>Age-Adjusted Death Rate: " + ageAdjustedDeathRate )
-          .style("display", "block");
-      })
-      .on("mouseout", function() {
-        // Sakrij popout kada se miš pomakne iznad države
-        d3.select(".popup").style("display", "none");
-      })
-
-      }
       function updateSelectedOptionDisplay() {
         var selectedOptionDisplay = document.getElementById("selectedOptionDisplay");
         selectedOptionDisplay.textContent = selectedOption;
